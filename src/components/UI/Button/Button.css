@@ -18,6 +18,12 @@
     transform: scale(0.9);
 }
 
+.Button:disabled {
+    color: #aaa;
+    transform: none;
+    cursor: not-allowed;
+}
+
 .Button:first-of-type {
     margin-left: 0;
     padding-left: 0;
