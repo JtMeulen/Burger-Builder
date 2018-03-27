@@ -10,7 +10,7 @@ import * as actions from '../../store/actions/index';
 
 class Orders extends Component {
     componentDidMount() {
-        this.props.onFetchOrders();
+        this.props.onFetchOrders(this.props.token, this.props.userId);
     }
 
     render() {
@@ -23,6 +23,9 @@ class Orders extends Component {
                     ingredients={order.ingredients}/>
             ))
         }
+        if (orders.length === 0) {
+            orders = <h3 style={{textAlign: "center"}}>You have made no orders yet!</h3>
+        }
         return (
             <div>
                 {orders}
@@ -34,13 +37,15 @@ class Orders extends Component {
 const mapStateToProps = state => {
     return {
         orders: state.order.orders,
-        loading: state.order.loading
+        loading: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onFetchOrders: () => dispatch(actions.fetchOrders())
+        onFetchOrders: (token, userId) => dispatch(actions.fetchOrders(token, userId))
     }
 }
 

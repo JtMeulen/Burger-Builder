@@ -7,7 +7,7 @@ export const purchaseBurgerSuccess = (id, orderData) => {
         orderId: id,
         orderData: orderData
     }
-} 
+}
 
 export const purchaseBurgerFail = (error) => {
     return {
@@ -22,16 +22,16 @@ export const purchaseBurgerStart = () => {
     }
 }
 
-export const purchaseBurger = (orderData) => {
+export const purchaseBurger = (orderData, token) => {
     return dispatch => {
-        dispatch( purchaseBurgerStart() );
-        axios.post('/orders.json', orderData)
-        .then(response => {
-            dispatch(purchaseBurgerSuccess(response.data.name, orderData))
-        })
-        .catch(error => {
-            dispatch(purchaseBurgerFail(error))
-        });
+        dispatch(purchaseBurgerStart());
+        axios.post('/orders.json?auth=' + token, orderData)
+            .then(response => {
+                dispatch(purchaseBurgerSuccess(response.data.name, orderData))
+            })
+            .catch(error => {
+                dispatch(purchaseBurgerFail(error))
+            });
     }
 }
 
@@ -61,22 +61,23 @@ export const fetchOrderStart = () => {
     }
 }
 
-export const fetchOrders = () => {
+export const fetchOrders = (token, userId) => {
     return dispatch => {
-        dispatch( fetchOrderStart() );
-        axios.get('/orders.json')
-        .then(res => {
-            const fetchedOrders = [];
-            for (let key in res.data) {
-                fetchedOrders.push({
-                    ...res.data[key],
-                    id: key
-                })
-            };
-            dispatch(fetchOrderSuccess(fetchedOrders))
-        })
-        .catch(err => {
-            dispatch(fetchOrderFail(err))
-        })
+        dispatch(fetchOrderStart());
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';
+        axios.get('/orders.json' + queryParams)
+            .then(res => {
+                const fetchedOrders = [];
+                for (let key in res.data) {
+                    fetchedOrders.push({
+                        ...res.data[key],
+                        id: key
+                    })
+                };
+                dispatch(fetchOrderSuccess(fetchedOrders))
+            })
+            .catch(err => {
+                dispatch(fetchOrderFail(err))
+            })
     }
 }
