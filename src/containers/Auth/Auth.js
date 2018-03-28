@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
+import { checkValidity } from '../../utility';
 
 import Input from '../../components/UI/Input/Input';
 import Button from '../../components/UI/Button/Button';
@@ -48,29 +49,11 @@ class Auth extends Component {
         isSignUp: true
     }
 
-    componentDidMount () {
-        if(!this.props.building && this.props.authRedirect !== '/'){
+    componentDidMount() {
+        if (!this.props.building && this.props.authRedirect !== '/') {
             this.props.onSetAuthRedirectPath();
         }
     }
-
-    checkValidity(value, rules) {
-        let isValid = true;
-
-        if (rules.required) {
-            isValid = value.trim() !== '' && isValid;
-        }
-
-        if (rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if (rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
-    };
 
     inputChangedHandler = (event, controlName) => {
         const updatedControls = {
@@ -78,7 +61,7 @@ class Auth extends Component {
             [controlName]: {
                 ...this.state.controls[controlName],
                 value: event.target.value,
-                valid: this.checkValidity(event.target.value, this.state.controls[controlName].validation),
+                valid: checkValidity(event.target.value, this.state.controls[controlName].validation),
                 touched: true
             }
         }
@@ -92,7 +75,7 @@ class Auth extends Component {
 
     switchAuthModeHandler = () => {
         this.setState(prevState => {
-            return {isSignUp: !prevState.isSignUp};
+            return { isSignUp: !prevState.isSignUp };
         });
     };
 
@@ -121,14 +104,14 @@ class Auth extends Component {
             );
         });
 
-        if(this.props.loading){
+        if (this.props.loading) {
             form = <Spinner />
         }
 
         let errorMessage = null;
-        if(this.props.error){
+        if (this.props.error) {
             errorMessage = (
-                <p style={{color: 'red'}}>{this.props.error.message}</p>
+                <p style={{ color: 'red' }}>{this.props.error.message}</p>
             );
         }
 
@@ -137,7 +120,7 @@ class Auth extends Component {
             authRedirect = <Redirect to={this.props.authRedirect} />
         };
 
-        return (            
+        return (
             <div className={classes.Auth}>
                 {authRedirect}
                 <h2>{!this.state.isSignUp ? 'LOG IN' : 'SIGN UP'}</h2>
